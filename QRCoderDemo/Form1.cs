@@ -1,14 +1,9 @@
+﻿using QRCoder;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using QRCoder;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Windows.Forms;
 
 namespace QRCoderDemo
 {
@@ -23,34 +18,44 @@ namespace QRCoderDemo
         {
             comboBoxECC.SelectedIndex = 0; //Pre-select ECC level "L"
             RenderQrCode();
+            labelNotice.Text = "";
         }
 
-        private void buttonGenerate_Click(object sender, EventArgs e)
+        private void ButtonGenerate_Click(object sender, EventArgs e)
         {
             RenderQrCode();
         }
 
         private void RenderQrCode()
         {
-            string level = comboBoxECC.SelectedItem.ToString();
-            QRCodeGenerator.ECCLevel eccLevel = (QRCodeGenerator.ECCLevel)(level == "L" ? 0 : level == "M" ? 1 : level == "Q" ? 2 : 3);
-            using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
+            try
             {
-                using (QRCodeData qrCodeData = qrGenerator.CreateQrCode(textBoxQRCode.Text, eccLevel))
+                string level = comboBoxECC.SelectedItem.ToString();
+                QRCodeGenerator.ECCLevel eccLevel = (QRCodeGenerator.ECCLevel)(level == "L" ? 0 : level == "M" ? 1 : level == "Q" ? 2 : 3);
+                using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
                 {
-                    using (QRCode qrCode = new QRCode(qrCodeData))
+                    using (QRCodeData qrCodeData = qrGenerator.CreateQrCode(textBoxQRCode.Text, eccLevel))
                     {
+                        using (QRCode qrCode = new QRCode(qrCodeData))
+                        {
 
-                        pictureBoxQRCode.BackgroundImage = qrCode.GetGraphic(20, Color.Black, Color.White,
-                            GetIconBitmap(), (int) iconSize.Value);
+                            pictureBoxQRCode.BackgroundImage = qrCode.GetGraphic(20, Color.Black, Color.White,
+                                GetIconBitmap(), (int)iconSize.Value);
 
-                         this.pictureBoxQRCode.Size = new System.Drawing.Size(pictureBoxQRCode.Width, pictureBoxQRCode.Height);
-                        //Set the SizeMode to center the image.
-                        this.pictureBoxQRCode.SizeMode = PictureBoxSizeMode.CenterImage;
+                            this.pictureBoxQRCode.Size = new System.Drawing.Size(pictureBoxQRCode.Width, pictureBoxQRCode.Height);
+                            //Set the SizeMode to center the image.
+                            this.pictureBoxQRCode.SizeMode = PictureBoxSizeMode.CenterImage;
 
-                        pictureBoxQRCode.SizeMode = PictureBoxSizeMode.StretchImage;
+                            pictureBoxQRCode.SizeMode = PictureBoxSizeMode.StretchImage;
+                        }
                     }
                 }
+
+                labelNotice.Text = "";
+            }
+            catch
+            {
+                labelNotice.Text = "Error!";
             }
         }
 
@@ -70,7 +75,7 @@ namespace QRCoderDemo
             return img;
         }
 
-        private void selectIconBtn_Click(object sender, EventArgs e)
+        private void SelectIconBtn_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDlg = new OpenFileDialog();
             openFileDlg.Title = "Select icon";
@@ -90,8 +95,7 @@ namespace QRCoderDemo
             }
         }
 
-
-        private void btn_save_Click(object sender, EventArgs e)
+        private void ButtonSave_Click(object sender, EventArgs e)
         {
 
             // Displays a SaveFileDialog so the user can save the Image
@@ -104,7 +108,7 @@ namespace QRCoderDemo
             if (saveFileDialog1.FileName != "")
             {
                 // Saves the Image via a FileStream created by the OpenFile method.
-                using (FileStream fs = (System.IO.FileStream) saveFileDialog1.OpenFile())
+                using (FileStream fs = (System.IO.FileStream)saveFileDialog1.OpenFile())
                 {
                     // Saves the Image in the appropriate ImageFormat based upon the
                     // File type selected in the dialog box.
@@ -134,10 +138,6 @@ namespace QRCoderDemo
                 }
             }
 
-
-
-
-
         }
 
         public void ExportToBmp(string path)
@@ -145,14 +145,15 @@ namespace QRCoderDemo
 
         }
 
-        private void textBoxQRCode_TextChanged(object sender, EventArgs e)
+        private void TextBoxQRCode_TextChanged(object sender, EventArgs e)
         {
             RenderQrCode();
         }
 
-        private void comboBoxECC_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBoxECC_SelectedIndexChanged(object sender, EventArgs e)
         {
             RenderQrCode();
         }
+
     }
 }
