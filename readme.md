@@ -1,3 +1,3 @@
 # QRCoder
 
-![](imgs\UI.png)
+![](imgs/UI.png)
